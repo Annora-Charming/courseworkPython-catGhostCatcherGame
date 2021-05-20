@@ -4,7 +4,16 @@ from game.beings.EnemyGhost import EnemyGhost
 from game.settings import DISPLAY
 from pygame.locals import (
     K_ESCAPE,
-    KEYDOWN
+    KEYDOWN,
+    K_UP,
+    K_w,
+    K_DOWN,
+    K_s,
+    K_LEFT,
+    K_a,
+    K_RIGHT,
+    K_d,
+    K_SPACE
 )
 
 pygame.init()
@@ -65,13 +74,19 @@ while running:
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 running = False
+            if event.key == K_LEFT or event.key == K_a:
+                player.moving('left')
+            if event.key == K_RIGHT or event.key == K_d:
+                player.moving('right')
+            if event.key == K_UP or event.key == K_w or event.key == K_SPACE:
+                player.moving('jump')
 
         if event.type == pygame.QUIT:
             running = False
 
-    key = pygame.key.get_pressed()
-    player.moving(key)
-    player.drawing(screen)
+    # key = pygame.key.get_pressed()
+    # player.moving(key)
+    # player.drawing(screen)
     enemies.update()
 
     for entity in all_sprites:
