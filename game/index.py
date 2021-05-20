@@ -71,6 +71,7 @@ while running:
 
     key = pygame.key.get_pressed()
     player.moving(key)
+    player.drawing(screen)
     enemies.update()
 
     for entity in all_sprites:

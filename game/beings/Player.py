@@ -8,36 +8,89 @@ from pygame.locals import (
     K_LEFT,
     K_a,
     K_RIGHT,
-    K_d
+    K_d,
+    K_SPACE
 )
 
 
 class Player(pygame.sprite.Sprite):
+    walking = False
+    walkingCycle = [pygame.image.load('images/player/walk/Walk (1).png'),
+                    pygame.image.load('images/player/walk/Walk (2).png'),
+                    pygame.image.load('images/player/walk/Walk (3).png'),
+                    pygame.image.load('images/player/walk/Walk (4).png'),
+                    pygame.image.load('images/player/walk/Walk (5).png'),
+                    pygame.image.load('images/player/walk/Walk (6).png'),
+                    pygame.image.load('images/player/walk/Walk (7).png'),
+                    pygame.image.load('images/player/walk/Walk (8).png'),
+                    pygame.image.load('images/player/walk/Walk (9).png'),
+                    pygame.image.load('images/player/walk/Walk (10).png')]
+    jumpingCycle = [pygame.image.load('images/player/jump/Jump (1).png'),
+                    pygame.image.load('images/player/jump/Jump (2).png'),
+                    pygame.image.load('images/player/jump/Jump (3).png'),
+                    pygame.image.load('images/player/jump/Jump (4).png'),
+                    pygame.image.load('images/player/jump/Jump (5).png'),
+                    pygame.image.load('images/player/jump/Jump (6).png'),
+                    pygame.image.load('images/player/jump/Jump (7).png'),
+                    pygame.image.load('images/player/jump/Jump (8).png')]
+    idleCycle = [pygame.image.load('images/player/idle/Idle (1).png'),
+                 pygame.image.load('images/player/idle/Idle (2).png'),
+                 pygame.image.load('images/player/idle/Idle (3).png'),
+                 pygame.image.load('images/player/idle/Idle (4).png'),
+                 pygame.image.load('images/player/idle/Idle (5).png'),
+                 pygame.image.load('images/player/idle/Idle (6).png'),
+                 pygame.image.load('images/player/idle/Idle (7).png'),
+                 pygame.image.load('images/player/idle/Idle (8).png'),
+                 pygame.image.load('images/player/idle/Idle (9).png'),
+                 pygame.image.load('images/player/idle/Idle (10).png')]
+    animationCount = 0
 
     def __init__(self):
         super(Player, self).__init__()
         self.surf = pygame.Surface((75, 75))
         self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect(center=(75, 650))
+        self.speed = 5
+        self.isJumping = False
+        self.jumpProcess = 10
 
     def moving(self, key):
-        # if key[K_UP] or key[K_w]:
-            # if self.rect.top < 0:
-            #     self.rect.top = 0
-            # else:
-            #     self.rect.move_ip(0, -1)
         if key[K_LEFT] or key[K_a]:
+            Player.walking = True
             if self.rect.left < 0:
                 self.rect.left = 0
             else:
-                self.rect.move_ip(-5, 0)
-        if key[K_RIGHT] or key[K_d]:
+                self.rect.move_ip(-self.speed, 0)
+        elif key[K_RIGHT] or key[K_d]:
+            Player.walking = True
             if self.rect.right > SCREEN_WIDTH:
                 self.rect.right = SCREEN_WIDTH
             else:
-                self.rect.move_ip(+5, 0)
-        # if key[K_DOWN] or key[K_s]:
-            # if self.rect.bottom > SCREEN_HEIGHT:
-            #     self.rect.bottom = SCREEN_HEIGHT
-            # else:
-            #     self.rect.move_ip(0, +1)
+                self.rect.move_ip(+self.speed, 0)
+        if not self.isJumping:
+            if key[K_SPACE] or key[K_UP] or [K_w]:
+                Player.walking = False
+                self.isJumping = True
+        else:
+            if self.jumpProcess >= -10:
+                if self.jumpProcess > 0:
+                    self.rect.move_ip(0, (self.jumpProcess ** 2) / 2)
+                else:
+                    self.rect.move_ip(0, -(self.jumpProcess ** 2) / 2)
+                self.jumpProcess -= 1
+            else:
+                self.isJumping = False
+                self.jumpProcess = 10
+
+    def drawing(self, window):
+        if Player.animationCount + 1 >= 60:
+            Player.animationCount = 0
+        if Player.walking:
+            window.blit(Player.walkingCycle[Player.animationCount // 5], (self.rect.x, self.rect.y))
+            Player.animationCount += 1
+        elif self.isJumping:
+            window.blit(Player.jumpingCycle[Player.animationCount // 5], (self.rect.x, self.rect.y))
+            Player.animationCount += 1
+        else:
+            window.blit(Player.idleCycle[Player.animationCount // 5], (self.rect.x, self.rect.y))
+            Player.animationCount += 1
