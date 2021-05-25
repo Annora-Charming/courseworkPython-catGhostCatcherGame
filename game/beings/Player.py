@@ -14,6 +14,7 @@ from pygame.locals import (
 
 
 class Player(pygame.sprite.Sprite):
+    isOnGround = False
     # walking = False
     # walkingCycle = [pygame.image.load('images/player/walk/Walk (1).png'),
     #                 pygame.image.load('images/player/walk/Walk (2).png'),
@@ -49,55 +50,28 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.surf = pygame.Surface((75, 75))
         self.surf.fill((255, 255, 255))
-        self.rect = self.surf.get_rect(center=(75, 650))
+        self.rect = self.surf.get_rect(center=(75, 0))
         self.speed = 5
-        self.isJumping = False
         self.jumpProcess = 10
 
-    # def moving(self, key):
-    #     if key[K_LEFT] or key[K_a]:
-    #         Player.walking = True
-    #         if self.rect.left < 0:
-    #             self.rect.left = 0
-    #         else:
-    #             self.rect.move_ip(-self.speed, 0)
-    #     if key[K_RIGHT] or key[K_d]:
-    #         Player.walking = True
-    #         if self.rect.right > SCREEN_WIDTH:
-    #             self.rect.right = SCREEN_WIDTH
-    #         else:
-    #             self.rect.move_ip(+self.speed, 0)
-    #     if key[K_SPACE] or key[K_UP] or [K_w]:
-    #         # Player.walking = False
-    #         self.isJumping = True
-    #         if self.isJumping:
-    #             if self.jumpProcess >= -10:
-    #                 if self.jumpProcess > 0:
-    #                     self.rect.move_ip(0, (self.jumpProcess ** 2) / 2)
-    #                 else:
-    #                     self.rect.move_ip(0, -(self.jumpProcess ** 2) / 2)
-    #                 self.jumpProcess -= 1
-    #             else:
-    #                 self.isJumping = False
-    #                 self.jumpProcess = 10
-
-    def moving(self, move_type):
-        if move_type == 'left':
-            # Player.walking = True
+    def moving(self, key):
+        if not Player.isOnGround:
+            self.rect.move_ip(0, +self.speed)
+        if key[K_LEFT] or key[K_a]:
+            Player.walking = True
             if self.rect.left < 0:
                 self.rect.left = 0
             else:
                 self.rect.move_ip(-self.speed, 0)
-        if move_type == 'right':
-            # Player.walking = True
+        if key[K_RIGHT] or key[K_d]:
+            Player.walking = True
             if self.rect.right > SCREEN_WIDTH:
                 self.rect.right = SCREEN_WIDTH
             else:
                 self.rect.move_ip(+self.speed, 0)
-        if move_type == 'jump':
-            # Player.walking = False
-            self.isJumping = True
-            if self.isJumping:
+        if key[K_SPACE] or key[K_UP] or [K_w]:
+            if Player.isOnGround:
+                # Player.walking = False
                 if self.jumpProcess >= -10:
                     if self.jumpProcess > 0:
                         self.rect.move_ip(0, -(self.jumpProcess ** 2) / 2)
@@ -105,8 +79,36 @@ class Player(pygame.sprite.Sprite):
                         self.rect.move_ip(0, (self.jumpProcess ** 2) / 2)
                     self.jumpProcess -= 1
                 else:
-                    self.isJumping = False
                     self.jumpProcess = 10
+
+    # def moving(self, move_type):
+    #     if not Player.isOnGround:
+    #         self.rect.move_ip(0, +self.speed)
+    #     if move_type == 'left':
+    #         # Player.walking = True
+    #         if self.rect.left < 0:
+    #             self.rect.left = 0
+    #         else:
+    #             self.rect.move_ip(-self.speed, 0)
+    #     if move_type == 'right':
+    #         # Player.walking = True
+    #         if self.rect.right > SCREEN_WIDTH:
+    #             self.rect.right = SCREEN_WIDTH
+    #         else:
+    #             self.rect.move_ip(+self.speed, 0)
+    #     if Player.isOnGround and move_type == 'jump':
+    #         # Player.walking = False
+    #         #self.isJumping = True
+    #         #if self.isJumping:
+    #         if self.jumpProcess >= -10:
+    #             if self.jumpProcess > 0:
+    #                 self.rect.move_ip(0, -(self.jumpProcess ** 2) / 2)
+    #             else:
+    #                 self.rect.move_ip(0, (self.jumpProcess ** 2) / 2)
+    #             self.jumpProcess -= 1
+    #         else:
+    #             Player.isOnGround = False
+    #             self.jumpProcess = 10
 
     def jumping(self, key):
         pass
